@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ModalityController;
+use App\Http\Controllers\CareerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,10 @@ Route::post('/modalities/search', [ModalityController::class, 'search']);
 Route::post('/modalities', [ModalityController::class, 'create']);
 Route::put('/modalities/{uuid}', [ModalityController::class, 'update']);
 Route::delete('/modalities/{uuid}', [ModalityController::class, 'delete']);
+
+Route::get('/careers', [CareerController::class, 'list']);
+Route::get('/careers/{uuid}', [CareerController::class, 'find']);
+Route::post('/careers/search', [CareerController::class, 'search']);
+Route::post('/careers', [CareerController::class, 'create']);
+Route::put('/careers/{uuid}', [CareerController::class, 'update']);
+Route::delete('/careers/{uuid}', [CareerController::class, 'delete']);
