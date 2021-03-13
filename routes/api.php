@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ModalityController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\PeriodController;
+use App\Http\Controllers\GradeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,3 +38,7 @@ Route::post('/periods/search', [PeriodController::class, 'search']);
 Route::post('/periods', [PeriodController::class, 'create']);
 Route::put('/periods/{uuid}', [PeriodController::class, 'update']);
 Route::delete('/periods/{uuid}', [PeriodController::class, 'delete']);
+
+Route::get('/grades', [GradeController::class, 'list']);
+Route::get('/grades/{uuid}', [GradeController::class, 'find']);
+Route::post('/grades/search', [GradeController::class, 'search']);
