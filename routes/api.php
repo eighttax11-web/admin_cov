@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ModalityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/modalities', [ModalityController::class, 'list']);
+Route::get('/modalities/{uuid}', [ModalityController::class, 'find']);
+Route::post('/modalities/search', [ModalityController::class, 'search']);
+Route::post('/modalities', [ModalityController::class, 'create']);
+Route::put('/modalities/{uuid}', [ModalityController::class, 'update']);
+Route::delete('/modalities/{uuid}', [ModalityController::class, 'delete']);
