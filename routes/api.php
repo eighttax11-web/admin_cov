@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ModalityController;
 use App\Http\Controllers\CareerController;
+use App\Http\Controllers\PeriodController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +30,10 @@ Route::post('/careers/search', [CareerController::class, 'search']);
 Route::post('/careers', [CareerController::class, 'create']);
 Route::put('/careers/{uuid}', [CareerController::class, 'update']);
 Route::delete('/careers/{uuid}', [CareerController::class, 'delete']);
+
+Route::get('/periods', [PeriodController::class, 'list']);
+Route::get('/periods/{uuid}', [PeriodController::class, 'find']);
+Route::post('/periods/search', [PeriodController::class, 'search']);
+Route::post('/periods', [PeriodController::class, 'create']);
+Route::put('/periods/{uuid}', [PeriodController::class, 'update']);
+Route::delete('/periods/{uuid}', [PeriodController::class, 'delete']);
