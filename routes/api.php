@@ -8,6 +8,7 @@ use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CampusController;
+use App\Http\Controllers\RolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,3 +56,6 @@ Route::post('/campuses/search', [CampusController::class, 'search']);
 Route::post('/campuses', [CampusController::class, 'create']);
 Route::put('/campuses/{uuid}', [CampusController::class, 'update']);
 Route::delete('/campuses/{uuid}', [CampusController::class, 'delete']);
+
+Route::get('/roles', [RolController::class, 'list']);
+
