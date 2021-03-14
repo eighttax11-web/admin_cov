@@ -17,7 +17,6 @@ class CreatePeopleTable extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('name');
-            $table->string('first_name');
             $table->string('surname');
             $table->string('second_surname');
             $table->softDeletes();

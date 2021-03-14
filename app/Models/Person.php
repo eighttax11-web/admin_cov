@@ -7,5 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'uuid',
+        'name',
+        'surname',
+        'second_surname',
+    ];
+
+    public function user()
+    {
+        return $this->hasOne('App\Models\User');
+    }
 }

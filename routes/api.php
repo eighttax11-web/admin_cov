@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ModalityController;
@@ -58,4 +59,14 @@ Route::put('/campuses/{uuid}', [CampusController::class, 'update']);
 Route::delete('/campuses/{uuid}', [CampusController::class, 'delete']);
 
 Route::get('/roles', [RolController::class, 'list']);
+
+Route::get('users/list', [UserController::class, 'list']);
+Route::post('add/user', [UserController::class, 'addUser']);
+Route::post('login', [UserController::class, 'authenticate']);
+
+Route::group(['middleware' => ['jwt.verify']], function() {
+
+    Route::post('user',[UserController::class, 'getAuthenticatedUser']);
+
+});
 
