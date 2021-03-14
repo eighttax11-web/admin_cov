@@ -7,6 +7,7 @@ use App\Http\Controllers\CareerController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\CampusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,3 +48,10 @@ Route::post('/grades/search', [GradeController::class, 'search']);
 Route::get('/groups', [GroupController::class, 'list']);
 Route::get('/groups/{uuid}', [GroupController::class, 'find']);
 Route::post('/groups/search', [GroupController::class, 'search']);
+
+Route::get('/campuses', [CampusController::class, 'list']);
+Route::get('/campuses/{uuid}', [CampusController::class, 'find']);
+Route::post('/campuses/search', [CampusController::class, 'search']);
+Route::post('/campuses', [CampusController::class, 'create']);
+Route::put('/campuses/{uuid}', [CampusController::class, 'update']);
+Route::delete('/campuses/{uuid}', [CampusController::class, 'delete']);
