@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Database\Seeders\GradeSeeder;
 use Database\Seeders\GroupSeeder;
+use Database\Seeders\RoleSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,5 +19,6 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call(GroupSeeder::class);
         $this->call(GradeSeeder::class);
+        $this->call(RoleSeeder::class);
     }
 }
