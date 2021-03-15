@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Uuid;
 
 class UserController extends Controller
@@ -34,6 +36,17 @@ class UserController extends Controller
     public function list()
     {
         return $this->user->list();
+    }
+
+    public function downloadFile($filename)
+    {
+        $pathToFile = storage_path("app/public/files/" . $filename);
+
+        if (!Storage::disk('local')->exists($pathToFile)) {
+            return response()->json('File not found', 404);
+        }
+
+        return response()->file($pathToFile);
     }
 }
 

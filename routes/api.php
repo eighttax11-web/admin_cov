@@ -70,3 +70,5 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
 });
 
+Route::get('file/download/{filename}', [UserController::class, 'downloadFile']);
+
