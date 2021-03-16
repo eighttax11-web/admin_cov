@@ -15,7 +15,6 @@ class CreateUserRolTable extends Migration
     {
         Schema::create('user_rol', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('role_id')->constrained();
             $table->softDeletes();

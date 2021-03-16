@@ -42,7 +42,7 @@ class UserController extends Controller
     {
         $pathToFile = storage_path("app/public/files/" . $filename);
 
-        if (!Storage::disk('local')->exists($pathToFile)) {
+        if (!file_exists($pathToFile)) {
             return response()->json('File not found', 404);
         }
 

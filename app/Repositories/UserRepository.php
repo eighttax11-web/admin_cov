@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Rol;
 use App\Models\User;
 use App\Models\Person;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,8 @@ class UserRepository
                 'name' => $request->get('name'),
                 'password' => Hash::make($request->get('password')),
             ]);
+
+            $user->roles()->attach([4]);
 
             DB::commit();
 

@@ -18,4 +18,9 @@ class Rol extends Model
         'uuid',
         'role'
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

@@ -29,5 +29,10 @@ class RoleSeeder extends Seeder
         $role->uuid = Uuid::generate()->string;
         $role->role = 'Profesor';
         $role->save();
+
+        $role = new Rol();
+        $role->uuid = Uuid::generate()->string;
+        $role->role = 'Default';
+        $role->save();
     }
 }
