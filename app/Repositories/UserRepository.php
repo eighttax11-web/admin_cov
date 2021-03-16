@@ -63,12 +63,11 @@ class UserRepository
 
         $token = JWTAuth::fromUser($user);
 
-        $data = [
-            'user' => $user,
-            'person' => $person
-        ];
+        $user = User::with('person', 'roles')->where('id', $user->id)->get();
 
-        return response()->json(compact('data', 'token'), 201);
+        $user->toArray();
+
+        return response()->json(compact('user', 'token'), 201);
     }
 
     public function getAuthenticatedUser()
