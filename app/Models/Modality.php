@@ -16,4 +16,9 @@ class Modality extends Model
       'name',
       'alias'
     ];
+
+    public function assignments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Assignment::class);
+    }
 }

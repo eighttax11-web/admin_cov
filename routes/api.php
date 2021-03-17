@@ -9,6 +9,7 @@ use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CampusController;
 use App\Http\Controllers\RolController;
+use App\Http\Controllers\AssignmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,3 +72,9 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
 Route::get('file/download/{filename}', [UserController::class, 'downloadFile']);
 
+Route::get('/assignments', [AssignmentController::class, 'list']);
+Route::get('/assignments/{uuid}', [AssignmentController::class, 'find']);
+Route::post('/assignments/search', [AssignmentController::class, 'search']);
+Route::post('/assignments', [AssignmentController::class, 'create']);
+Route::put('/assignments/{uuid}', [AssignmentController::class, 'update']);
+Route::delete('/assignments/{uuid}', [AssignmentController::class, 'delete']);

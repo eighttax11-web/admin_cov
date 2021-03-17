@@ -24,6 +24,7 @@ class UserRepository
             'second_surname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'role' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -49,7 +50,7 @@ class UserRepository
                 'password' => Hash::make($request->get('password')),
             ]);
 
-            $user->roles()->attach([4]);
+            $user->roles()->attach([$request->input('role')]);
 
             DB::commit();
 

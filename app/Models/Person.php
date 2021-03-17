@@ -18,4 +18,9 @@ class Person extends Model
     {
         return $this->hasOne('App\Models\User');
     }
+
+    public function assignments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Assignment::class);
+    }
 }
