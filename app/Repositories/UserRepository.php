@@ -11,10 +11,17 @@ use Illuminate\Support\Facades\Hash;
 use JWTAuth;
 use Throwable;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Shared\LogManage;
 
 
 class UserRepository
 {
+    private $logs;
+
+    public function __construct(LogManage $logManage)
+    {
+        $this->logs = $logManage;
+    }
 
     public function addUser($request, $uuid)
     {
@@ -23,8 +30,7 @@ class UserRepository
             'surname' => 'required|string|max:255',
             'second_surname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-            'role' => 'required'
+            'password' => 'required|string|min:6|confirmed'
         ]);
 
         if ($validator->fails()) {
@@ -50,16 +56,17 @@ class UserRepository
                 'password' => Hash::make($request->get('password')),
             ]);
 
-            $user->roles()->attach([$request->input('role')]);
+            $user->roles()->attach([4]);
 
             DB::commit();
 
-        } catch (\Exception | Throwable $e) {
+            $this->logs->alert('UserRepository', 'addUser', 'Se creo un nuevo usuario');
+
+        } catch (\Exception $ex) {
 
             DB::rollBack();
 
-            throw $e;
-
+            $this->logs->emergency('UserRepository', 'addUser', 'Ocurrio un error al crear un usuario');
         }
 
         $token = JWTAuth::fromUser($user);

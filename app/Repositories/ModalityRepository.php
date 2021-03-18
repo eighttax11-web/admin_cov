@@ -3,18 +3,28 @@
 namespace App\Repositories;
 
 use App\Models\Modality;
+use App\Shared\LogManage;
 
 class ModalityRepository
 {
+    private $logs;
+
+    public function __construct(LogManage $logManage)
+    {
+        $this->logs = $logManage;
+    }
+
     public function create($uuid, $name, $alias)
     {
         try {
             $new_modality['uuid'] = $uuid;
             $new_modality['name'] = $name;
             $new_modality['alias'] = $alias;
+            $this->logs->info('ModalityRepository','create','Se creo una nueva modalidad');
             return Modality::create($new_modality);
         } catch (\Exception $ex) {
-            return "Error";
+            $this->logs->emergency('ModalityRepository','create','Ocurrio un error al crear una modalidad');
+            return response()->json(['error' => $ex->getMessage()]);
         }
     }
 
