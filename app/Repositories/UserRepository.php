@@ -30,44 +30,41 @@ class UserRepository
         if ($request->file('excel') != null) {
             try {
                 $mime = $request->file('excel')->getMimeType();
-                $nameOriginal = $request->file('excel')->getClientOriginalName(); //nombre original
-                $ext = $request->file('excel')->getClientOriginalExtension(); // extension
+                $nameOriginal = $request->file('excel')->getClientOriginalName();
+                $ext = $request->file('excel')->getClientOriginalExtension();
                 $user = 1;
                 $path = public_path('teachers');
                 $nameFile = strval($user) . '_' . strval(date('Y_m_d__H_i_s.')) . $ext;
                 $request->file('excel')->move($path, $nameFile);
 
-                $objArchivo = [
+                $objFile = [
                     'uuid' => Uuid::generate()->string,
                     'original_name' => $nameOriginal,
                     'assigned_name' => $nameFile
                 ];
 
-//                var_dump($objArchivo);die();
+                $file = TeacherList::create($objFile);
 
-                $archivo = TeacherList::create($objArchivo);
-
-                $libro = \PhpOffice\PhpSpreadsheet\IOFactory::load($path . '/' . $nameFile);
-                $hoja = $libro->getActiveSheet();
-                $totalFilas = $hoja->getCellCollection()->getHighestRow();
+                $book = \PhpOffice\PhpSpreadsheet\IOFactory::load($path . '/' . $nameFile);
+                $sheet = $book->getActiveSheet();
+                $totalRows = $sheet->getCellCollection()->getHighestRow();
                 $teachers = [];
 
-                //nombre	ap_paterno	ap_materno	matricula	equipo
                 DB::beginTransaction();
                 for ($i = 2; $i <= 6; $i++) {
-                    if ($hoja->getCell("A" . $i)->getValue() != null) {
+                    if ($sheet->getCell("A" . $i)->getValue() != null) {
 
-                        $name = $hoja->getCell("A" . $i)->getValue();
-                        $surname = $hoja->getCell("B" . $i)->getValue();
-                        $second_surname = $hoja->getCell("C" . $i)->getValue();
-                        $email = $hoja->getCell("D" . $i)->getValue();
+                        $name = $sheet->getCell("A" . $i)->getValue();
+                        $surname = $sheet->getCell("B" . $i)->getValue();
+                        $second_surname = $sheet->getCell("C" . $i)->getValue();
+                        $email = $sheet->getCell("D" . $i)->getValue();
 
                         $person = Person::create([
                             'uuid' => Uuid::generate()->string,
                             'name' => $name,
                             'surname' => $surname,
                             'second_surname' => $second_surname,
-                            'file_id' => $archivo->id
+                            'file_id' => $file->id
                         ]);
 
                         $user = User::create([
@@ -75,27 +72,24 @@ class UserRepository
                             'person_id' => $person->id,
                             'email' => $email,
                             'name' => $name,
-                            'password' => Hash::make($request->get('password').substr($request->get('name'), 0, 3).substr($request->get('surname'), 0, 3)),
+                            'password' => Hash::make($request->get('password') . substr($request->get('name'), 0, 3) . substr($request->get('surname'), 0, 3)),
                         ]);
+
+                        $user->roles()->attach([3]);
 
                     } else {
                         break;
                     }
                 }
+
                 DB::commit();
-
-                $token = JWTAuth::fromUser($user);
-
-                $user = User::with('person', 'roles')->where('id', $user->id)->get();
-
-                $user->toArray();
-
-                return response()->json(compact('user', 'token'), 201);
 
             } catch (\Exception $exception) {
                 DB::rollBack();
                 return response()->json(['error' => $exception->getMessage()]);
             }
+
+            return response()->json('Users correctly registered', 201);
         }
     }
 

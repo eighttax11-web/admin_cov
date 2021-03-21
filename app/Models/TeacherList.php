@@ -24,7 +24,7 @@ class TeacherList extends Model
 
     public function people()
     {
-        return $this->hasMany('App\Models\People', 'file_id', 'id');
+        return $this->hasMany('App\Models\Person', 'file_id', 'id');
     }
 
 }
