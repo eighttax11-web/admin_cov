@@ -61,7 +61,10 @@ Route::delete('/campuses/{uuid}', [CampusController::class, 'delete']);
 Route::get('/roles', [RolController::class, 'list']);
 
 Route::get('users/list', [UserController::class, 'list']);
-Route::post('add/user', [UserController::class, 'addUser']);
+
+// Añadir lista de usuarios
+Route::post('add/user', [UserController::class, 'addUsers']);
+
 Route::post('login', [UserController::class, 'authenticate']);
 
 Route::group(['middleware' => ['jwt.verify']], function() {

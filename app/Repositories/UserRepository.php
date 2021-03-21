@@ -12,6 +12,8 @@ use JWTAuth;
 use Throwable;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Shared\LogManage;
+use App\Models\TeacherList;
+use Uuid;
 
 
 class UserRepository
@@ -23,59 +25,78 @@ class UserRepository
         $this->logs = $logManage;
     }
 
-    public function addUser($request, $uuid)
+    public function addUsers($request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
-            'second_surname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed'
-        ]);
+        if ($request->file('excel') != null) {
+            try {
+                $mime = $request->file('excel')->getMimeType();
+                $nameOriginal = $request->file('excel')->getClientOriginalName(); //nombre original
+                $ext = $request->file('excel')->getClientOriginalExtension(); // extension
+                $user = 1;
+                $path = public_path('teachers');
+                $nameFile = strval($user) . '_' . strval(date('Y_m_d__H_i_s.')) . $ext;
+                $request->file('excel')->move($path, $nameFile);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+                $objArchivo = [
+                    'uuid' => Uuid::generate()->string,
+                    'original_name' => $nameOriginal,
+                    'assigned_name' => $nameFile
+                ];
+
+//                var_dump($objArchivo);die();
+
+                $archivo = TeacherList::create($objArchivo);
+
+                $libro = \PhpOffice\PhpSpreadsheet\IOFactory::load($path . '/' . $nameFile);
+                $hoja = $libro->getActiveSheet();
+                $totalFilas = $hoja->getCellCollection()->getHighestRow();
+                $teachers = [];
+
+                //nombre	ap_paterno	ap_materno	matricula	equipo
+                DB::beginTransaction();
+                for ($i = 2; $i <= 6; $i++) {
+                    if ($hoja->getCell("A" . $i)->getValue() != null) {
+
+                        $name = $hoja->getCell("A" . $i)->getValue();
+                        $surname = $hoja->getCell("B" . $i)->getValue();
+                        $second_surname = $hoja->getCell("C" . $i)->getValue();
+                        $email = $hoja->getCell("D" . $i)->getValue();
+
+                        $person = Person::create([
+                            'uuid' => Uuid::generate()->string,
+                            'name' => $name,
+                            'surname' => $surname,
+                            'second_surname' => $second_surname,
+                            'file_id' => $archivo->id
+                        ]);
+
+                        $user = User::create([
+                            'uuid' => Uuid::generate()->string,
+                            'person_id' => $person->id,
+                            'email' => $email,
+                            'name' => $name,
+                            'password' => Hash::make($request->get('password').substr($request->get('name'), 0, 3).substr($request->get('surname'), 0, 3)),
+                        ]);
+
+                    } else {
+                        break;
+                    }
+                }
+                DB::commit();
+
+                $token = JWTAuth::fromUser($user);
+
+                $user = User::with('person', 'roles')->where('id', $user->id)->get();
+
+                $user->toArray();
+
+                return response()->json(compact('user', 'token'), 201);
+
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                return response()->json(['error' => $exception->getMessage()]);
+            }
         }
-
-        DB::beginTransaction();
-
-        try {
-
-            $person = Person::create([
-                'uuid' => $uuid,
-                'name' => $request->get('name'),
-                'surname' => $request->get('surname'),
-                'second_surname' => $request->get('second_surname')
-            ]);
-
-            $user = User::create([
-                'uuid' => $uuid,
-                'person_id' => $person->id,
-                'email' => $request->get('email'),
-                'name' => $request->get('name'),
-                'password' => Hash::make($request->get('password')),
-            ]);
-
-            $user->roles()->attach([4]);
-
-            DB::commit();
-
-            $this->logs->alert('UserRepository', 'addUser', 'Se creo un nuevo usuario');
-
-        } catch (\Exception $ex) {
-
-            DB::rollBack();
-
-            $this->logs->emergency('UserRepository', 'addUser', 'Ocurrio un error al crear un usuario');
-        }
-
-        $token = JWTAuth::fromUser($user);
-
-        $user = User::with('person', 'roles')->where('id', $user->id)->get();
-
-        $user->toArray();
-
-        return response()->json(compact('user', 'token'), 201);
     }
 
     public function getAuthenticatedUser()
@@ -112,7 +133,6 @@ class UserRepository
         $users = User::with('person')->get();
 
         return $users->toArray();
-
     }
 }
 

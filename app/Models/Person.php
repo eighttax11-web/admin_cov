@@ -12,6 +12,7 @@ class Person extends Model
         'name',
         'surname',
         'second_surname',
+        'file_id'
     ];
 
     public function user()

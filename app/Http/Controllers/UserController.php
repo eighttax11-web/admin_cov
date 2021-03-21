@@ -27,10 +27,9 @@ class UserController extends Controller
         return $this->user->getAuthenticatedUser();
     }
 
-    public function addUser(Request $request)
+    public function addUsers(Request $request)
     {
-        $uuid = Uuid::generate()->string;
-        return $this->user->addUser($request, $uuid);
+        return $this->user->addUsers($request);
     }
 
     public function list()
