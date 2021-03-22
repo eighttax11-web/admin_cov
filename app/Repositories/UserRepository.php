@@ -6,6 +6,7 @@ use App\Models\Rol;
 use App\Models\User;
 use App\Models\Person;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use JWTAuth;
@@ -82,10 +83,15 @@ class UserRepository
                     }
                 }
 
+                Log::info('UserRepository - addUsers - A new users list has been uploaded');
+
                 DB::commit();
 
             } catch (\Exception $exception) {
+                Log::emergency("UserRepository - addUsers - " . $exception->getMessage());
+
                 DB::rollBack();
+
                 return response()->json(['error' => $exception->getMessage()]);
             }
 
