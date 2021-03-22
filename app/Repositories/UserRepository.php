@@ -53,7 +53,7 @@ class UserRepository
                 $teachers = [];
 
                 DB::beginTransaction();
-                for ($i = 2; $i <= 6; $i++) {
+                for ($i = 2; $i <= 19; $i++) {
                     if ($sheet->getCell("A" . $i)->getValue() != null) {
 
                         $name = $sheet->getCell("A" . $i)->getValue();
