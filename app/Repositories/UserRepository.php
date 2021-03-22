@@ -68,12 +68,14 @@ class UserRepository
                             'file_id' => $file->id
                         ]);
 
+                        $password = substr($name, 0, 3) . substr($surname, 0, 3);
+
                         $user = User::create([
                             'uuid' => Uuid::generate()->string,
                             'person_id' => $person->id,
                             'email' => $email,
                             'name' => $name,
-                            'password' => Hash::make($request->get('password') . substr($request->get('name'), 0, 3) . substr($request->get('surname'), 0, 3)),
+                            'password' => Hash::make($password),
                         ]);
 
                         $user->roles()->attach([3]);
@@ -112,6 +114,7 @@ class UserRepository
         } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
+
         return response()->json(compact('user'));
     }
 
@@ -125,12 +128,19 @@ class UserRepository
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        return response()->json(compact('token'));
+
+        $user = JWTAuth::user();
+
+        Log::info('UserRepository - getAuthenticatedUser' . "User logged in " . $user);
+
+        return response()->json(compact('user','token'));
     }
 
     public function list()
     {
         $users = User::with('person')->get();
+
+        Log::info('UserRepository - list');
 
         return $users->toArray();
     }
