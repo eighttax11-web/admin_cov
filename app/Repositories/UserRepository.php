@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use JWTAuth;
@@ -83,12 +84,13 @@ class UserRepository
                     } else {
                         break;
                     }
+
+                    $this->sendEmail($user);
                 }
 
                 Log::info('UserRepository - addUsers - A new users list has been uploaded');
 
                 DB::commit();
-
             } catch (\Exception $exception) {
                 Log::emergency("UserRepository - addUsers - " . $exception->getMessage());
 
@@ -143,6 +145,18 @@ class UserRepository
         Log::info('UserRepository - list');
 
         return $users->toArray();
+    }
+
+    public function sendEmail($user) {
+        $data['subject'] = 'ADMINCOV';
+
+        $data['for'] = $user['email'];
+
+        Mail::send('mail.mail', ['user' => $user], function($msj) use($data){
+            $msj->from("20183l301023@utcv.edu.mx", "ADMINCOV");
+            $msj->subject($data['subject']);
+            $msj->to($data['for']);
+        });
     }
 }
 
